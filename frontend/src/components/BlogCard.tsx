@@ -17,7 +17,7 @@ function BlogCard({
 }: BlogCardProps) {
   return (
     <Link to={`/blog/${id}`}>
-    <div className="border-b border-slate-200 p-4 w-screen max-w-screen-lg cursor-pointer">
+    <div className="border-b border-slate-200 p-4 w-screen max-w-screen-md cursor-pointer">
       <div className="flex">
         <Avatar name={authorName} />
         <div className="flex flex-col justify-center pl-2 text-sm font-extralight">
@@ -41,7 +41,7 @@ function BlogCard({
   );
 }
 
-function Circle() {
+export function Circle() {
   return <div className="h-1 w-1 rounded-full bg-slate-500"></div>;
 }
 
