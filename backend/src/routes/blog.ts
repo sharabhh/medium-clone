@@ -2,7 +2,10 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { verify } from "hono/jwt";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { createBlogInput, updateBlogInput } from "@sharabh/medium-project-common";
+import {
+  createBlogInput,
+  updateBlogInput,
+} from "@sharabh/medium-project-common";
 
 const blogRouter = new Hono<{
   Bindings: {
@@ -40,15 +43,14 @@ blogRouter.post("/", async (c) => {
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
-
   try {
     const body = await c.req.json();
 
-    const {success} = createBlogInput.safeParse(body)
+    const { success } = createBlogInput.safeParse(body);
 
-    if(!success){
-      c.status(411)
-      return c.json({msg: "Inputs are not in correct format"})
+    if (!success) {
+      c.status(411);
+      return c.json({ msg: "Inputs are not in correct format" });
     }
     const authorId = c.get("userId");
 
@@ -78,13 +80,13 @@ blogRouter.put("/", async (c) => {
 
   try {
     const body = await c.req.json();
-    const {success} = updateBlogInput.safeParse(body);
+    const { success } = updateBlogInput.safeParse(body);
 
-    if(!success){
+    if (!success) {
       c.status(411);
       return c.json({
-        msg: "Inputs are not in correct format"
-      })
+        msg: "Inputs are not in correct format",
+      });
     }
     const blog = await prisma.post.update({
       where: {
@@ -111,7 +113,18 @@ blogRouter.get("/bulk", async (c) => {
   }).$extends(withAccelerate());
 
   try {
-    const blogs = await prisma.post.findMany();
+    const blogs = await prisma.post.findMany({
+      select: {
+        content: true,
+        title: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
     return c.json({ blogs });
   } catch (e) {
@@ -131,6 +144,16 @@ blogRouter.get("/:id", async (c) => {
     const blog = await prisma.post.findFirst({
       where: {
         id: id,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     return c.json({

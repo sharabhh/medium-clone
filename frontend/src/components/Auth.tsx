@@ -18,7 +18,7 @@ function Auth({ type }: { type: "signup" | "signin" }) {
         `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
         postInputs,
       );
-      const jwt = response.data;
+      const jwt = response?.data?.jwt;
       localStorage.setItem("jwt", jwt);
       navigate("/blogs");
     } catch (e) {
@@ -111,7 +111,7 @@ function LabelledInput({
 }: labelledInputType) {
   return (
     <div>
-      <label className="mb-2 block pt-4 text-sm font-medium font-semibold text-black text-gray-900">
+      <label className="mb-2 block pt-4 text-sm font-semibold text-gray-900">
         {label}
       </label>
       <input
